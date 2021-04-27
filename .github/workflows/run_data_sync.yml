@@ -105,3 +105,13 @@ jobs:
           rebase: 'true'
           name: ${{ env.GITHUB_NAME }}
           email: ${{ env.GITHUB_EMAIL }}
+
+      - name: sync gitee
+        uses: Yikun/hub-mirror-action@master
+        with:
+          src: github/ustccuikai
+          dst: gitee/ustccuikai
+          dst_key: ${{ secrets.DST_KEY }}
+          dst_token: ${{ secrets.DST_TOKEN }}
+          force_update: true
+          static_list: "running_page"
