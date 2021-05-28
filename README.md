@@ -44,7 +44,7 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 | [AhianZhang](https://github.com/AhianZhang) | https://running.ahianzhang.com | Keep |
 | [L1cardo](https://github.com/L1cardo) | https://run.licardo.cn | Nike |
 | [luckylele666](https://github.com/luckylele666) | https://0000928.xyz | Strava |
-| [MFYDev](https://github.com/MFYDev) | https://mfydev.run | Nike |
+| [MFYDev](https://github.com/MFYDev) | https://mfydev.run | Garmin-cn |
 
 ## How it works
 
@@ -61,6 +61,7 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 
 > automatically backup gpx data for easy backup and uploading to other software.
 
+> Note: If you don't want to make the data public, you can choose strava's fuzzy processing, or private repositories.
 
 ## Support
 
@@ -148,6 +149,7 @@ python3(python) scripts/gpx_sync.py
 <details>
 <summary>Get your <code>Garmin</code> data</summary>
 <br>
+If you only want to sync `type running` add args --only-run
 
 ```python
 python3(python) scripts/garmin_sync.py ${your email} ${your password}
@@ -183,6 +185,8 @@ python3(python) scripts/garmin_sync.py example@gmail.com example --is-cn
 <summary>Get your <code>Nike Run Club</code> data</summary>
 
 <br>
+
+**Please note: When you choose to deploy running_page on your own server, due to Nike has blocked some IDC's IP band, maybe your server cannot sync Nike Run Club's data correctly and display `403 error`, then you have to change another way to host it.**
 
 Get Nike's `refresh_token`
 1. Login [Nike](https://www.nike.com) website
