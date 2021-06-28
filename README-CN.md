@@ -6,7 +6,7 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 
 # [打造个人跑步主页](https://yihong.run/running)
 
-[English](README-EN.md) | 简体中文 | [Wiki](https://wiki.mfydev.run/)
+[English](README.md) | 简体中文 | [Wiki](https://wiki.mfydev.run/)
 
 <details>
 <summary>GIF 展示</summary>
@@ -537,7 +537,7 @@ Actions [源码](https://github.com/yihong0618/running_page/blob/master/.github/
 提交 PR 前:
 
 - 使用 black 对 Python 代码进行格式化。(black .)
-- 使用 isort 对 Python import 进行格式化。(isort --profile black  **/**/*.py )
+- 使用 isort 对 Python import 进行格式化。(isort --profile black  **/**/*.py)
 
 # 特别感谢
 
