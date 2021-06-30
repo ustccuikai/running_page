@@ -245,18 +245,6 @@ class Garmin:
             except Exception as e:
                 print(e)
                 raise Exception("failed to upload")
-            # change the type
-            # if resp["successes"]:
-            #     activity_id = resp["successes"][0]["internalId"]
-            #     print(f"id {activity_id} uploaded...")
-            #     data = {"activityTypeDTO": {"typeKey": garmin_type}}
-            #     encoding_headers = {"Content-Type": "application/json; charset=UTF-8"}
-            #     r = await self.req.put(
-            #         self.activity_url.format(activity_id=activity_id),
-            #         data=json.dumps(data),
-            #         headers=encoding_headers,
-            #     )
-            #     r.raise_for_status()
         await self.req.aclose()
 
 
