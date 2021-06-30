@@ -82,7 +82,11 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client):
         # is this startTimeGMT must have ?
         after_datetime_str = last_activity[0]["startTimeGMT"]
         after_datetime = datetime.strptime(after_datetime_str, "%Y-%m-%d %H:%M:%S")
-        after_datetime = after_datetime.replace(tzinfo=timezone.utc).astimezone(tz=pytz.timezone("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M:%S')
+        after_datetime = (
+            after_datetime.replace(tzinfo=timezone.utc)
+            .astimezone(tz=pytz.timezone("Asia/Shanghai"))
+            .strftime("%Y-%m-%d %H:%M:%S")
+        )
         print(after_datetime)
         filters = {"after": after_datetime}
     strava_activities = list(strava_client.get_activities(**filters))
@@ -130,7 +134,11 @@ if __name__ == "__main__":
         options.strava_client_secret,
         options.strava_refresh_token,
     )
-    strava_web_client = WebClient(access_token=strava_client.access_token, email=options.strava_email, password=options.strava_password)
+    strava_web_client = WebClient(
+        access_token=strava_client.access_token,
+        email=options.strava_email,
+        password=options.strava_password,
+    )
 
     garmin_auth_domain = "CN" if options.is_cn else ""
 
@@ -138,7 +146,9 @@ if __name__ == "__main__":
         options.garmin_email, options.garmin_password, garmin_auth_domain
     )
     loop = asyncio.get_event_loop()
-    future = asyncio.ensure_future(upload_to_activities(garmin_client, strava_client, strava_web_client))
+    future = asyncio.ensure_future(
+        upload_to_activities(garmin_client, strava_client, strava_web_client)
+    )
     loop.run_until_complete(future)
 
     # Run the strava sync

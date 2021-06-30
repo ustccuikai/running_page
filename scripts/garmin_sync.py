@@ -219,13 +219,12 @@ class Garmin:
                 r.raise_for_status()
         await self.req.aclose()
 
-
     async def upload_activities_fit(self, datas):
         if not self.is_login:
             self.login()
         for data in datas:
             print(data.filename)
-            with open(data.filename, 'wb') as f:
+            with open(data.filename, "wb") as f:
                 for chunk in data.content:
                     f.write(chunk)
             f = open(data.filename, "rb")
