@@ -1,10 +1,11 @@
 import argparse
 import asyncio
+import pytz
 from io import BytesIO
 import gpxpy
 from xml.etree import ElementTree
 import gpxpy.gpx
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from utils import make_strava_client
 from garmin_sync import Garmin
 from strava_sync import run_strava_sync
@@ -81,6 +82,8 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client):
         # is this startTimeGMT must have ?
         after_datetime_str = last_activity[0]["startTimeGMT"]
         after_datetime = datetime.strptime(after_datetime_str, "%Y-%m-%d %H:%M:%S")
+        after_datetime = after_datetime.replace(tzinfo=timezone.utc).astimezone(tz=pytz.timezone("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M:%S')
+        print(after_datetime)
         filters = {"after": after_datetime}
     strava_activities = list(strava_client.get_activities(**filters))
     files_list = []
@@ -139,8 +142,8 @@ if __name__ == "__main__":
     loop.run_until_complete(future)
 
     # Run the strava sync
-    run_strava_sync(
-        options.strava_client_id,
-        options.strava_client_secret,
-        options.strava_refresh_token,
-    )
+    # run_strava_sync(
+    #     options.strava_client_id,
+    #     options.strava_client_secret,
+    #     options.strava_refresh_token,
+    # )
