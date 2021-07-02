@@ -219,7 +219,7 @@ class Garmin:
                 r.raise_for_status()
         await self.req.aclose()
 
-    async def upload_activities_fit(self, datas):
+    async def upload_activities_original(self, datas):
         if not self.is_login:
             self.login()
         for data in datas:

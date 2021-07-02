@@ -96,7 +96,7 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client):
         print(i.id)
         data = strava_web_client.get_activity_data(i.id, fmt=DataFormat.ORIGINAL)
         files_list.append(data)
-    await garmin_client.upload_activities_fit(files_list)
+    await garmin_client.upload_activities_original(files_list)
     return files_list
 
 
