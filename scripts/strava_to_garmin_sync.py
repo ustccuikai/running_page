@@ -74,7 +74,7 @@ def make_gpx_from_points(title, points_dict_list):
     return gpx.to_xml()
 
 
-async def upload_to_activities(garmin_client, strava_client, strava_web_client):
+async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
     last_activity = await garmin_client.get_activities(0, 1)
     if not last_activity:
         filters = {}
@@ -94,7 +94,7 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client):
     # strava rate limit
     for i in strava_activities[:50]:
         print(i.id)
-        data = strava_web_client.get_activity_data(i.id, fmt=DataFormat.ORIGINAL)
+        data = strava_web_client.get_activity_data(i.id, fmt=format)
         files_list.append(data)
     await garmin_client.upload_activities_original(files_list)
     return files_list
@@ -109,6 +109,8 @@ if __name__ == "__main__":
     parser.add_argument("garmin_password", nargs="?", help="password of garmin")
     parser.add_argument("strava_email", nargs="?", help="email of strava")
     parser.add_argument("strava_password", nargs="?", help="password of strava")
+    parser.add_argument("garmin_email_nrc", nargs="?", help="email of garmin for nrc")
+    parser.add_argument("garmin_password_nrc", nargs="?", help="password of garmin for nrc")
     parser.add_argument(
         "--is-cn",
         dest="is_cn",
@@ -132,9 +134,13 @@ if __name__ == "__main__":
     garmin_client = Garmin(
         options.garmin_email, options.garmin_password, garmin_auth_domain
     )
+    garmin_client_nrc = Garmin(
+        options.garmin_email_nrc, options.garmin_password_nrc, garmin_auth_domain
+    )
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
-        upload_to_activities(garmin_client, strava_client, strava_web_client)
+        upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
+        upload_to_activities(garmin_client_nrc, strava_client, strava_web_client, DataFormat.TCX)
     )
     loop.run_until_complete(future)
 
