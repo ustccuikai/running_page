@@ -110,7 +110,9 @@ if __name__ == "__main__":
     parser.add_argument("strava_email", nargs="?", help="email of strava")
     parser.add_argument("strava_password", nargs="?", help="password of strava")
     parser.add_argument("garmin_email_nrc", nargs="?", help="email of garmin for nrc")
-    parser.add_argument("garmin_password_nrc", nargs="?", help="password of garmin for nrc")
+    parser.add_argument(
+        "garmin_password_nrc", nargs="?", help="password of garmin for nrc"
+    )
     parser.add_argument(
         "--is-cn",
         dest="is_cn",
@@ -139,12 +141,19 @@ if __name__ == "__main__":
     )
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
-        upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
+        upload_to_activities(
+            garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
+        )
     )
     loop.run_until_complete(future)
 
-    upload_to_activities(garmin_client_nrc, strava_client, strava_web_client, DataFormat.TCX)
-
+    loop = asyncio.get_event_loop()
+    future = asyncio.ensure_future(
+        upload_to_activities(
+            garmin_client_nrc, strava_client, strava_web_client, DataFormat.TCX
+        )
+    )
+    loop.run_until_complete(future)
 
     # Run the strava sync
     run_strava_sync(
