@@ -136,9 +136,6 @@ if __name__ == "__main__":
     garmin_client = Garmin(
         options.garmin_email, options.garmin_password, garmin_auth_domain
     )
-    garmin_client_nrc = Garmin(
-        options.garmin_email_nrc, options.garmin_password_nrc, garmin_auth_domain
-    )
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
         upload_to_activities(
@@ -147,6 +144,9 @@ if __name__ == "__main__":
     )
     loop.run_until_complete(future)
 
+    garmin_client_nrc = Garmin(
+        options.garmin_email_nrc, options.garmin_password_nrc, garmin_auth_domain
+    )
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(
         upload_to_activities(
