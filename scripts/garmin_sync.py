@@ -79,7 +79,7 @@ class Garmin:
         self.activity_url = self.URL_DICT.get("ACTIVITY_URL")
         self.is_login = False
 
-    @retry(stop=stop_after_attempt(5), wait=wait_fixed(15))
+    @retry(stop=stop_after_attempt(10), wait=wait_fixed(30))
     def login(self):
         """
         Login to portal

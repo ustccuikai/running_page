@@ -133,6 +133,13 @@ if __name__ == "__main__":
 
     garmin_auth_domain = "CN" if options.is_cn else ""
 
+    # Run the strava sync
+    run_strava_sync(
+        options.strava_client_id,
+        options.strava_client_secret,
+        options.strava_refresh_token,
+    )
+
     garmin_client = Garmin(
         options.garmin_email, options.garmin_password, garmin_auth_domain
     )
@@ -154,10 +161,3 @@ if __name__ == "__main__":
         )
     )
     loop.run_until_complete(future)
-
-    # Run the strava sync
-    run_strava_sync(
-        options.strava_client_id,
-        options.strava_client_secret,
-        options.strava_refresh_token,
-    )
