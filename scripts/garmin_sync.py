@@ -20,6 +20,7 @@ import cloudscraper
 import httpx
 from config import GPX_FOLDER, JSON_FILE, SQL_FILE, config
 from io import BytesIO
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from utils import make_activities_file
 
@@ -78,6 +79,7 @@ class Garmin:
         self.activity_url = self.URL_DICT.get("ACTIVITY_URL")
         self.is_login = False
 
+    @retry(stop=stop_after_attempt(5), wait=wait_fixed(15))
     def login(self):
         """
         Login to portal

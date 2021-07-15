@@ -14,6 +14,7 @@ pyyaml
 aiofiles
 cloudscraper
 stravaweblib
+tenacity
 
 # Ci
 black

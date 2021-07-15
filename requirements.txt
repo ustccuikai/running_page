@@ -14,3 +14,4 @@ pyyaml
 aiofiles
 cloudscraper
 stravaweblib
+tenacity
