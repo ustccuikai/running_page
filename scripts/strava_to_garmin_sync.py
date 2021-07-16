@@ -75,9 +75,10 @@ def make_gpx_from_points(title, points_dict_list):
 
 
 async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
+    files_list = []
     last_activity = await garmin_client.get_activities(0, 1)
     if not last_activity:
-        filters = {}
+        return files_list
     else:
         # is this startTimeGMT must have ?
         after_datetime_str = last_activity[0]["startTimeGMT"]
@@ -90,7 +91,6 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client, 
         print(after_datetime)
         filters = {"after": after_datetime}
     strava_activities = list(strava_client.get_activities(**filters))
-    files_list = []
     # strava rate limit
     for i in strava_activities[:50]:
         print(i.id)
