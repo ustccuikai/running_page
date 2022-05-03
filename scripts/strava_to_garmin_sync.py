@@ -75,10 +75,8 @@ def make_gpx_from_points(title, points_dict_list):
 
 
 async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
-    print(format)
     files_list = []
     last_activity = await garmin_client.get_activities(0, 1)
-    print(last_activity)
     if not last_activity:
         print("no activity")
         return files_list
@@ -137,18 +135,27 @@ if __name__ == "__main__":
     garmin_auth_domain = "CN" if options.is_cn else ""
 
     try:
-        print(garmin_auth_domain)
         garmin_client = Garmin(
             options.garmin_email, options.garmin_password, garmin_auth_domain
         )
-        print("fit")
-        upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
-        
+        loop = asyncio.get_event_loop()
+        future = asyncio.ensure_future(
+          upload_to_activities(
+            garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
+          )
+        )
+        loop.run_until_complete(future)
 
         garmin_client_nrc = Garmin(
             options.garmin_email_nrc, options.garmin_password_nrc, garmin_auth_domain
         )
-        upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.TCX)
+        loop = asyncio.get_event_loop()
+        future = asyncio.ensure_future(
+            upload_to_activities(
+                garmin_client_nrc, strava_client, strava_web_client, DataFormat.TCX
+            )
+        )
+        loop.run_until_complete(future)
         
     except Exception as err:
         print(err)
