@@ -75,6 +75,7 @@ def make_gpx_from_points(title, points_dict_list):
 
 
 async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
+    print(format)
     files_list = []
     last_activity = await garmin_client.get_activities(0, 1)
     print(last_activity)
@@ -136,9 +137,11 @@ if __name__ == "__main__":
     garmin_auth_domain = "CN" if options.is_cn else ""
 
     try:
+        print(options.garmin_email)
         garmin_client = Garmin(
             options.garmin_email, options.garmin_password, garmin_auth_domain
         )
+        print("fit")
         upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
         
 
