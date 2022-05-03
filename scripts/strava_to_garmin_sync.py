@@ -79,6 +79,7 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client, 
     last_activity = await garmin_client.get_activities(0, 1)
     print(last_activity)
     if not last_activity:
+        print("no activity")
         return files_list
     else:
         # is this startTimeGMT must have ?
