@@ -139,24 +139,14 @@ if __name__ == "__main__":
         garmin_client = Garmin(
             options.garmin_email, options.garmin_password, garmin_auth_domain
         )
-        loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(
-            upload_to_activities(
-                garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
-            )
-        )
-        loop.run_until_complete(future)
+        upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
+        
 
         garmin_client_nrc = Garmin(
             options.garmin_email_nrc, options.garmin_password_nrc, garmin_auth_domain
         )
-        loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(
-            upload_to_activities(
-                garmin_client_nrc, strava_client, strava_web_client, DataFormat.TCX
-            )
-        )
-        loop.run_until_complete(future)
+        upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.TCX)
+        
     except Exception as err:
         print(err)
 
