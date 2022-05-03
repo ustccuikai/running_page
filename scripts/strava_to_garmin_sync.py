@@ -137,7 +137,7 @@ if __name__ == "__main__":
     garmin_auth_domain = "CN" if options.is_cn else ""
 
     try:
-        print(options.garmin_email)
+        print(garmin_auth_domain)
         garmin_client = Garmin(
             options.garmin_email, options.garmin_password, garmin_auth_domain
         )
