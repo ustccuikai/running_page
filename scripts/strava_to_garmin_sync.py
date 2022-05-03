@@ -77,6 +77,7 @@ def make_gpx_from_points(title, points_dict_list):
 async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
     files_list = []
     last_activity = await garmin_client.get_activities(0, 1)
+    print(last_activity)
     if not last_activity:
         return files_list
     else:
