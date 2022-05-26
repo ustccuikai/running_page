@@ -61,9 +61,6 @@
     "check": "npx prettier --write *.{js,jsx,scss,json,md,yaml}",
     "ci": "yarn run check && yarn run build && yarn run test"
   },
-  "engines": {
-    "node": ">=10.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/yihong0618/running_page"
