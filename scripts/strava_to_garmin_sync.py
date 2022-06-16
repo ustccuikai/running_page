@@ -110,10 +110,6 @@ if __name__ == "__main__":
     parser.add_argument("garmin_password", nargs="?", help="password of garmin")
     parser.add_argument("strava_email", nargs="?", help="email of strava")
     parser.add_argument("strava_password", nargs="?", help="password of strava")
-    parser.add_argument("garmin_email_nrc", nargs="?", help="email of garmin for nrc")
-    parser.add_argument(
-        "garmin_password_nrc", nargs="?", help="password of garmin for nrc"
-    )
     parser.add_argument(
         "--is-cn",
         dest="is_cn",
@@ -133,32 +129,8 @@ if __name__ == "__main__":
     )
 
     garmin_auth_domain = "CN" if options.is_cn else ""
-
-    try:
-        garmin_client = Garmin(
-            options.garmin_email, options.garmin_password, garmin_auth_domain
-        )
-        loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(
-          upload_to_activities(
-            garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
-          )
-        )
-        loop.run_until_complete(future)
-
-        garmin_client_nrc = Garmin(
-            options.garmin_email_nrc, options.garmin_password_nrc, garmin_auth_domain
-        )
-        loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(
-            upload_to_activities(
-                garmin_client_nrc, strava_client, strava_web_client, DataFormat.TCX
-            )
-        )
-        loop.run_until_complete(future)
-        
-    except Exception as err:
-        print(err)
+    garmin_client = Garmin(options.garmin_email, options.garmin_password, garmin_auth_domain)
+    upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
 
     # Run the strava sync
     run_strava_sync(
