@@ -86,8 +86,8 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client, 
         after_datetime = datetime.strptime(after_datetime_str, "%Y-%m-%d %H:%M:%S")
         after_datetime = (
             after_datetime.replace(tzinfo=timezone.utc)
-            .astimezone(tz=pytz.timezone("Asia/Shanghai"))
-            .strftime("%Y-%m-%d %H:%M:%S")
+                .astimezone(tz=pytz.timezone("Asia/Shanghai"))
+                .strftime("%Y-%m-%d %H:%M:%S")
         )
         print(after_datetime)
         filters = {"after": after_datetime}
@@ -111,12 +111,12 @@ if __name__ == "__main__":
     parser.add_argument("strava_email", nargs="?", help="email of strava")
     parser.add_argument("strava_password", nargs="?", help="password of strava")
     parser.add_argument(
-         "--is-cn",
-         dest="is_cn",
+        "--is-cn",
+        dest="is_cn",
         action="store_true",
         help="if garmin accout is cn",
     )
-    
+
     options = parser.parse_args()
     strava_client = make_strava_client(
         options.strava_client_id,
@@ -131,23 +131,23 @@ if __name__ == "__main__":
 
     garmin_auth_domain = "CN" if options.is_cn else ""
 
-     try:
-         garmin_client = Garmin(
-             options.garmin_email, options.garmin_password, garmin_auth_domain
-         )
-         loop = asyncio.get_event_loop()
-         future = asyncio.ensure_future(
-           upload_to_activities(
-             garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
-           )
-         )
-         loop.run_until_complete(future)
+    try:
+        garmin_client = Garmin(
+            options.garmin_email, options.garmin_password, garmin_auth_domain
+        )
+        loop = asyncio.get_event_loop()
+        future = asyncio.ensure_future(
+            upload_to_activities(
+                garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
+            )
+        )
+        loop.run_until_complete(future)
 
-     except Exception as err:
-         print(err)
-    # Run the strava sync
-    run_strava_sync(
-        options.strava_client_id,
-        options.strava_client_secret,
-        options.strava_refresh_token,
-    )
+    except Exception as err:
+        print(err)
+# Run the strava sync
+run_strava_sync(
+    options.strava_client_id,
+    options.strava_client_secret,
+    options.strava_refresh_token,
+)
