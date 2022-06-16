@@ -74,7 +74,7 @@ def make_gpx_from_points(title, points_dict_list):
     return gpx.to_xml()
 
 
-async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
+def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
     files_list = []
     last_activity = await garmin_client.get_activities(0, 1)
     if not last_activity:
@@ -110,12 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("garmin_password", nargs="?", help="password of garmin")
     parser.add_argument("strava_email", nargs="?", help="email of strava")
     parser.add_argument("strava_password", nargs="?", help="password of strava")
-    parser.add_argument(
-        "--is-cn",
-        dest="is_cn",
-        action="store_true",
-        help="if garmin accout is cn",
-    )
+
     options = parser.parse_args()
     strava_client = make_strava_client(
         options.strava_client_id,
@@ -128,8 +123,7 @@ if __name__ == "__main__":
         password=options.strava_password,
     )
 
-    garmin_auth_domain = "CN" if options.is_cn else ""
-    garmin_client = Garmin(options.garmin_email, options.garmin_password, garmin_auth_domain)
+    garmin_client = Garmin(options.garmin_email, options.garmin_password, "CN")
     upload_to_activities(garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL)
 
     # Run the strava sync
