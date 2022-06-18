@@ -102,7 +102,7 @@ jobs:
       - name: Run sync Strava to Garmin-cn(Run with strava(or others upload to strava) data backup in Garmin-cn)
         if: env.RUN_TYPE == 'strava_to_garmin_cn'
         run: |
-          python scripts/strava_to_garmin_sync.py ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }}  ${{ secrets.GRAMIN_EMAIL }} ${{ secrets.GARMIN_PASSWORD }}  ${{ secrets.STRAVA_EMAIL }} ${{ secrets.STRAVA_PASSWORD }} --cn
+          python scripts/strava_to_garmin_sync.py ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }}  ${{ secrets.GRAMIN_EMAIL }} ${{ secrets.GARMIN_PASSWORD }}  ${{ secrets.STRAVA_EMAIL }} ${{ secrets.STRAVA_PASSWORD }} --is-cn
 
       - name: Make svg GitHub profile
         if: env.RUN_TYPE != 'pass'
