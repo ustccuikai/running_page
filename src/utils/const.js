@@ -10,6 +10,9 @@ const MUNICIPALITY_CITIES_ARR = [
   '澳门特别行政区',
 ];
 
+ // styling: map height
+ const MAP_HEIGHT = 600;
+
 // IF you outside China please make sure IS_CHINESE = false
 const IS_CHINESE = true;
 const USE_ANIMATION_FOR_GRID = false;
@@ -51,6 +54,7 @@ export {
   INFO_MESSAGE,
   RUN_TITLES,
   USE_ANIMATION_FOR_GRID,
+  MAP_HEIGHT,
 };
 
 const nike = 'rgb(224,237,94)'; // if you want change the main color change here src/styles/variables.scss
