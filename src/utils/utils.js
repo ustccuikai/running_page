@@ -1,7 +1,9 @@
 import * as mapboxPolyline from '@mapbox/polyline';
-import { WebMercatorViewport } from 'react-map-gl';
+import gcoord from 'gcoord';
+import { WebMercatorViewport } from 'react-map-gl'
 import { chinaGeojson } from '../static/run_countries';
-import { MUNICIPALITY_CITIES_ARR, RUN_TITLES } from './const';
+import { chinaCities } from '../static/city';
+import { MUNICIPALITY_CITIES_ARR, NEED_FIX_MAP, RUN_TITLES } from './const';
 
 const titleForShow = (run) => {
   const date = run.start_date_local.slice(0, 11);
@@ -23,7 +25,20 @@ const formatPace = (d) => {
   const pace = (1000.0 / 60.0) * (1.0 / d);
   const minutes = Math.floor(pace);
   const seconds = Math.floor((pace - minutes) * 60.0);
-  return `${minutes}:${seconds.toFixed(0).toString().padStart(2, '0')}`;
+  return `${minutes}'${seconds.toFixed(0).toString().padStart(2, '0')}"`;
+};
+
+const formatRunTime = (distance,pace) => {
+  if (Number.isNaN(distance) || Number.isNaN(pace)) {
+    return '0min';
+  }
+  const formatPace = (1000.0 / 60.0) * (1.0 / pace);
+  const minutes = Math.floor(formatPace * distance);
+  if (minutes === 0) {
+    const seconds = Math.floor((formatPace * distance - minutes) * 60.0);
+    return seconds + 's';
+  }
+  return minutes + 'min';
 };
 
 // for scroll to the map
@@ -33,16 +48,34 @@ const scrollToMap = () => {
   window.scroll(rect.left + window.scrollX, rect.top + window.scrollY);
 };
 
+const cities = chinaCities.map((c) => c.name);
 // what about oversea?
 const locationForRun = (run) => {
-  const location = run.location_country;
+  let location = run.location_country;
   let [city, province, country] = ['', '', ''];
   if (location) {
     // Only for Chinese now
-    const cityMatch = location.match(/[\u4e00-\u9fa5]*(市|自治州)/);
-    const provinceMatch = location.match(/[\u4e00-\u9fa5]*(省|自治区)/);
+    // should fiter 臺灣
+    if(location.indexOf('臺灣') > -1){
+      const taiwan = '台湾';
+      location = location.replace('臺灣', taiwan);
+      const _locArr = location.split(',').map(item=>item.trim());
+      const _locArrLen = _locArr.length;
+      // directly repalce last item with 中国
+      _locArr[_locArrLen-1] = '中国';
+      // if location not contain '台湾省', insert it before zip code(posistion is _locArrLen-2)
+      if(_locArr.indexOf(`${taiwan}省`) === -1){
+        _locArr.splice(_locArrLen-2, 0, `${taiwan}省`)
+      }
+      location = _locArr.join(',');
+    }
+    const cityMatch = location.match(/[\u4e00-\u9fa5]{2,}(市|自治州)/);
+    const provinceMatch = location.match(/[\u4e00-\u9fa5]{2,}(省|自治区)/);
     if (cityMatch) {
       [city] = cityMatch;
+      if (!cities.includes(city)) {
+        city = ''
+      }
     }
     if (provinceMatch) {
       [province] = provinceMatch;
@@ -78,7 +111,7 @@ const pathForRun = (run) => {
     const c = mapboxPolyline.decode(run.summary_polyline);
     // reverse lat long for mapbox
     c.forEach((arr) => {
-      [arr[0], arr[1]] = [arr[1], arr[0]];
+      [arr[0], arr[1]] = !NEED_FIX_MAP ? [arr[1], arr[0]] : gcoord.transform([arr[1], arr[0]], gcoord.GCJ02, gcoord.WGS84);
     });
     return c;
   } catch (err) {
@@ -207,4 +240,5 @@ export {
   sortDateFunc,
   sortDateFuncReverse,
   getBoundsForGeoData,
+  formatRunTime,
 };
