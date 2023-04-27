@@ -17,6 +17,9 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 
 ## [大家的跑步主页展示](https://github.com/yihong0618/running_page/issues/12)
 
+<details>
+<summary>Running page runners</summary>
+
 | Runner                                          | page                                         | App       |
 | ----------------------------------------------- | ---------------------------------------------|-----------|
 | [zhubao315](https://github.com/zhubao315)       | <https://zhubao315.github.io/running>        | Strava    |
@@ -54,9 +57,18 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 | [liugezhou](https://github.com/liugezhou)       | <https://run.liugezhou.online>               | Strava    |
 | [zhubao315](https://github.com/zhubao315)       | <https://zhubao315.github.io/running>        | Strava    |
 | [Jason Tan](https://github.com/Jason-cqtan)     | <https://jason-cqtan.github.io/running_page> | Nike      |
-| [Conge](https://github.com/conge)               | <https://conge.github.io/running_page>       | Strava      |
-| [cvvz](https://github.com/cvvz)                 | <https://cvvz.github.io/running>             | Strava      |
+| [Conge](https://github.com/conge)               | <https://conge.github.io/running_page>       | Strava    |
+| [cvvz](https://github.com/cvvz)                 | <https://cvvz.github.io/running>             | Strava    |
 | [zHElEARN](https://github.com/zHElEARN)         | <https://workouts.zhelearn.com>              | Strava    |
+| [Rhfeng](https://sport.frh.life)                | <https://sport.frh.life>                     | Garmin-cn |
+| [Ym9i](https://github.com/Ym9i)                 | <https://bobrun.vercel.app/>                 | Strava    |
+| [jianchengwang](https://github.com/jianchengwang)   | <https://jianchengwang.github.io/running_page>     | Suunto |
+| [fxbin](https://github.com/fxbin)   | <https://fxbin.github.io/sport-records/>     | Keep |
+| [shensl4499](https://github.com/shensl4499) | <https://waner.run> | codoon |
+| [haowei93](https://github.com/haowei93) | <https://haowei93.github.io/ > | gpx |
+| [stevenash0822](https://github.com/stevenash0822) | <https://run.imangry.xyz/> | Strava |
+
+</details>
 
 ## 它是怎么工作的
 
@@ -91,6 +103,7 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 - **[Keep](#Keep)**
 - **[悦跑圈](#joyrun悦跑圈，因悦跑圈限制单个设备原因，无法自动化)**
 - **[咕咚](#codoon咕咚，因咕咚限制单个设备原因，无法自动化)**
+- **[郁金香运动](#tulipsport)**
 - **[GPX](#GPX)**
 - **[TCX](#TCX)**
 - **[Tcx+Strava(upload all tcx data to strava)](#TCX_to_Strava)**
@@ -125,9 +138,9 @@ docker build -t running_page:latest . --build-arg app=Garmin --build-arg email="
 # Garmin-CN
 docker build -t running_page:latest . --build-arg app=Garmin-CN --build-arg email=""  --build-arg password="" 
 # Strava
-docker build -t running_page:latest . --build-arg app=Strava --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresch_token="" 
+docker build -t running_page:latest . --build-arg app=Strava --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresh_token="" 
 #Nike_to_Strava
-docker build -t running_page:latest . --build-arg app=Nike_to_Strava  --build-arg nike_refresh_token="" --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresch_token="" 
+docker build -t running_page:latest . --build-arg app=Nike_to_Strava  --build-arg nike_refresh_token="" --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresh_token="" 
 
 #启动
 docker run -itd -p 80:80   running_page:latest
@@ -365,6 +378,24 @@ TRANS_END_DATE = "2014-03-24"
 
 </details>
 
+### TulipSport
+
+<details>
+<summary>获取您的郁金香运动数据</summary>
+
+> 郁金香运动数据的获取方式采用开放平台授权模式，通过访问[RunningPage授权页面](https://tulipsport.rdshoep.com)获取账号TOKEN(不会过期，只能访问2021年之后的数据)，并在仓库的GitHub Actions环境配置中添加`TULIPSPORT_TOKEN`配置。
+
+```python
+python3(python) scripts/tulipsport_sync.py ${tulipsport_token}
+```
+
+示例：
+
+```python
+python3(python) scripts/tulipsport_sync.py nLgy****RyahI
+```
+</details>
+
 ### Garmin
 
 <details>
@@ -474,7 +505,7 @@ http://localhost/exchange_token?state=&code=1dab37edd9970971fb502c9efdd087f4f347
 1dab37edd9970971fb502c9efdd087f4f3471e6
 ```
 
-![get_code](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_code.png) 6. 使用 Client_id、Client_secret、Code 请求 refresch_token
+![get_code](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_code.png) 6. 使用 Client_id、Client_secret、Code 请求 refresh_token
 在 `终端/iTerm` 中执行：
 
 ```
@@ -495,13 +526,15 @@ curl -X POST https://www.strava.com/oauth/token \
 -F grant_type=authorization_code
 ```
 
-![get_refresch_token](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_refresch_token.png)
+![get_refresh_token](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_refresh_token.png)
 
 7. 同步数据至 Strava
    在项目根目录执行：
 
+> 第一次同步Strava数据时需要更改在strava_sync.py中的第12行代码False改为True，运行完成后，再改为False。 
+
 ```python
-python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresch_token}
+python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresh_token}
 ```
 
 其他资料参见
@@ -523,7 +556,7 @@ python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresch_
 3. 在项目根目录下执行:
 
 ```python
-python3(python) scripts/tcx_to_strava_sync.py ${client_id} ${client_secret} ${strava_refresch_token}
+python3(python) scripts/tcx_to_strava_sync.py ${client_id} ${client_secret} ${strava_refresh_token}
 ```
 
 示例：
@@ -550,7 +583,7 @@ python3(python) scripts/tcx_to_strava_sync.py xxx xxx xxx --all
 2. 在项目根目录下执行:
 
 ```python
-python3(python) scripts/gpx_to_strava_sync.py ${client_id} ${client_secret} ${strava_refresch_token}
+python3(python) scripts/gpx_to_strava_sync.py ${client_id} ${client_secret} ${strava_refresh_token}
 ```
 
 示例：
@@ -576,7 +609,7 @@ python3(python) scripts/gpx_to_strava_sync.py xxx xxx xxx --all
 2. 在项目根目录下执行:
 
 ```python
-python3(python) scripts/nike_to_strava_sync.py ${nike_refresh_token} ${client_id} ${client_secret} ${strava_refresch_token}
+python3(python) scripts/nike_to_strava_sync.py ${nike_refresh_token} ${client_id} ${client_secret} ${strava_refresh_token}
 ```
 
 示例：
@@ -599,7 +632,7 @@ python3(python) scripts/nike_to_strava_sync.py eyJhbGciThiMTItNGIw******  xxx xx
 2. 在项目根目录下执行:
 
 ```python
-python3(python) scripts/garmin_to_strava_sync.py  ${client_id} ${client_secret} ${strava_refresch_token} ${garmin_email} ${garmin_password} --is-cn
+python3(python) scripts/garmin_to_strava_sync.py  ${client_id} ${client_secret} ${strava_refresh_token} ${garmin_email} ${garmin_password} --is-cn
 ```
 
 示例：
@@ -703,13 +736,17 @@ python3(python) scripts/gen_svg.py --from-db --type circular --use-localtime
 <details>
 <summary> 部署到 GitHub Pages </summary>
 
-1. 配置 GitHub Action。如需使用自定义域名，可以修改 [.github/workflows/gh-pages.yml](.github/workflows/gh-pages.yml) 中的 `fqdn`（默认已注释掉）
-
-2. 修改 `gatsby-config.js`，更新 `pathPrefix`。【如果使用自定义域名，可跳过这一步】
-
-3. 在项目的 `Actions -> Workflows -> All Workflows` 中选择 Publish GitHub Pages，点击 `Run workflow`
-
-4. 在项目的 `Settings -> GitHub Pages -> Source` 部分，选择 `Branch: gh-pages` 并点击 `Save`。
+1. 为GitHub Actions添加代码提交权限  
+   访问仓库的 `Settings > Actions > General`页面，找到`Workflow permissions`的设置项，将选项配置为`Read and write permissions`，支持CI将运动数据更新后提交到仓库中。
+2. 更新配置并提交代码
+   1. 更新[./gatsby-config.js](./gatsby-config.js#L3)中的`siteMetadata`节点；  
+      （按需）如果启用自定义域名模式或者变更Fork后的仓库名称，请变更`pathPrefix`的值。
+   2. 更新GitHub CI的配置 [.github/workflows/run_data_sync.yml](.github/workflows/run_data_sync.yml#L24) 中的配置；
+   3. （按需）如需使用自定义域名，可以修改 [.github/workflows/gh-pages.yml](.github/workflows/gh-pages.yml#L60) 中的 `fqdn`（默认已注释掉）
+   4. 在仓库的`Settings > Secrets and variables > Actions`页面添加对应服务的环境配置信息，参考不同平台[配置](#支持)。
+3. 同步数据并发布GitHub Pages
+   1. 手动触发`Run Data Sync`的Github Action完成数据同步，完成后会自动触发`Publish GitHub Pages`的任务执行，等待执行完成；
+   2. 开通仓库GitHub Pages功能，选择`gh-pages`分支和`/(root)`目录。
 
 </details>
 

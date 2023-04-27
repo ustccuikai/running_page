@@ -21,6 +21,10 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 
 ## [Runner's Page Show](https://github.com/yihong0618/running_page/issues/12)
 
+<details>
+<summary>Running page runners</summary>
+
+
 | Runner                                          | page                                         | App       |
 | ----------------------------------------------- | ---------------------------------------------|-----------|
 | [zhubao315](https://github.com/zhubao315)       | <https://zhubao315.github.io/running>        | Strava    |
@@ -58,6 +62,15 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 | [Jason Tan](https://github.com/Jason-cqtan)     | <https://jason-cqtan.github.io/running_page> | Nike      |
 | [Conge](https://github.com/conge)               | <https://conge.github.io/running_page>       | Strava    |
 | [zHElEARN](https://github.com/zHElEARN)         | <https://workouts.zhelearn.com>              | Strava    |
+| [Ym9i](https://github.com/Ym9i)                 | <https://bobrun.vercel.app/>                 | Strava    |
+| [jianchengwang](https://github.com/jianchengwang)   | <https://jianchengwang.github.io/running_page>     | Suunto |
+| [fxbin](https://github.com/fxbin)   | <https://fxbin.github.io/sport-records/>     | Keep |
+| [shensl4499](https://github.com/shensl4499) | <https://waner.run> | codoon |
+| [haowei93](https://github.com/haowei93) | <https://haowei93.github.io/ > | gpx |
+| [stevenash0822](https://github.com/stevenash0822) | <https://run.imangry.xyz/> | Strava |
+
+
+</details>
 
 ## How it works
 
@@ -117,9 +130,9 @@ docker build -t running_page:latest . --build-arg app=Garmin --build-arg email="
 # Garmin-CN
 docker build -t running_page:latest . --build-arg app=Garmin-CN --build-arg email=""  --build-arg password="" 
 # Strava
-docker build -t running_page:latest . --build-arg app=Strava --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresch_token="" 
+docker build -t running_page:latest . --build-arg app=Strava --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresh_token="" 
 #Nike_to_Strava
-docker build -t running_page:latest . --build-arg app=Nike_to_Strava  --build-arg nike_refresh_token="" --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresch_token="" 
+docker build -t running_page:latest . --build-arg app=Nike_to_Strava  --build-arg nike_refresh_token="" --build-arg client_id=""  --build-arg client_secret=""  --build-arg refresh_token="" 
 
 #run
 docker run -itd -p 80:80   running_page:latest
@@ -330,7 +343,7 @@ http://localhost/exchange_token?state=&code=1dab37edd9970971fb502c9efdd087f4f347
 
 ![get_code](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_code.png)
 
-6. Use `Client_id`、`Client_secret`、`Code` get `refresch_token`: Execute in `Terminal/iTerm`
+6. Use `Client_id`、`Client_secret`、`Code` get `refresh_token`: Execute in `Terminal/iTerm`
 
 ```
 curl -X POST https://www.strava.com/oauth/token \
@@ -350,12 +363,14 @@ curl -X POST https://www.strava.com/oauth/token \
 -F grant_type=authorization_code
 ```
 
-![get_refresch_token](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_refresch_token.png)
+![get_refresh_token](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_refresh_token.png)
 
 7. Sync `Strava` data
 
+> The first time you synchronize Strava data you need to change line 12 of the code False to True in strava_sync.py, and then change it to False after it finishes running. 
+
 ```python
-python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresch_token}
+python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresh_token}
 ```
 
 References：
@@ -379,7 +394,7 @@ References：
 3. Execute in the root directory:
 
 ```python
-python3(python) scripts/tcx_to_strava_sync.py ${client_id} ${client_secret}  ${strava_refresch_token}
+python3(python) scripts/tcx_to_strava_sync.py ${client_id} ${client_secret}  ${strava_refresh_token}
 ```
 
 example：
@@ -406,7 +421,7 @@ python3(python) scripts/tcx_to_strava_sync.py xxx xxx xxx --all
 3. Execute in the root directory:
 
 ```python
-python3(python) scripts/gpx_to_strava_sync.py ${client_id} ${client_secret}  ${strava_refresch_token}
+python3(python) scripts/gpx_to_strava_sync.py ${client_id} ${client_secret}  ${strava_refresh_token}
 ```
 
 example：
@@ -434,7 +449,7 @@ python3(python) scripts/tcx_to_strava_sync.py xxx xxx xxx --all
 2. Execute in the root directory:
 
 ```python
-python3(python) scripts/nike_to_strava_sync.py ${nike_refresh_token} ${client_id} ${client_secret} ${strava_refresch_token}
+python3(python) scripts/nike_to_strava_sync.py ${nike_refresh_token} ${client_id} ${client_secret} ${strava_refresh_token}
 ```
 
 example：
@@ -456,7 +471,7 @@ python3(python) scripts/nike_to_strava_sync.py eyJhbGciThiMTItNGIw******  xxx xx
 2. Execute in the root directory:
 
 ```python
-python3(python) scripts/garmin_to_strava_sync.py  ${client_id} ${client_secret} ${strava_refresch_token} ${garmin_email} ${garmin_password} --is-cn
+python3(python) scripts/garmin_to_strava_sync.py  ${client_id} ${client_secret} ${strava_refresh_token} ${garmin_email} ${garmin_password} --is-cn
 ```
 e.g.
 
@@ -596,6 +611,8 @@ The following steps need to be taken
 <br>
 
 ![image](https://user-images.githubusercontent.com/15976103/94451037-8922e680-01e0-11eb-9bb9-729f0eadcdb7.png)
+
+4. Go to repository's `Settings -> Code and automation -> Actions ->General`, Scroll to the bottom, find `Workflow permissions`, choose the first option `Read and write permissions`, click `Save`.
 
 </details>
 
