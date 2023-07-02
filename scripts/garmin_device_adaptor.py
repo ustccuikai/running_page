@@ -37,8 +37,8 @@ def do_wrap_device_info(origin_file):
     add customized device info to fit file,
     """
     # if origin file is gpx file, skip
-    #if not is_fit_file(origin_file):
-    #    return BytesIO(origin_file.read())
+    if not is_fit_file(origin_file):
+        return BytesIO(origin_file.read())
 
     fit_file = FitFile.from_bytes(origin_file.read())
     builder = FitFileBuilder(auto_define=True)
