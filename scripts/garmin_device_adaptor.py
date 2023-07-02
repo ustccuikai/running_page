@@ -55,16 +55,16 @@ def do_wrap_device_info(origin_file):
     message.product = GARMIN_DEVICE_PRODUCT_ID
     builder.add(message)
 
-    for record in fit_file.records:
-        message = record.message
-        if message.global_id == FileIdMessage.ID:
-            if isinstance(message, FileIdMessage):
-                message.manufacturer = MANUFACTURER
-                message.garmin_product = GARMIN_DEVICE_PRODUCT_ID
-                message.product = GARMIN_DEVICE_PRODUCT_ID
-                message.type = 4  # Activity
+    #for record in fit_file.records:
+    #    message = record.message
+    #    if message.global_id == FileIdMessage.ID:
+    #        if isinstance(message, FileIdMessage):
+    #            message.manufacturer = MANUFACTURER
+    #            message.garmin_product = GARMIN_DEVICE_PRODUCT_ID
+    #            message.product = GARMIN_DEVICE_PRODUCT_ID
+    #            message.type = 4  # Activity
 
-        builder.add(message)
+     #   builder.add(message)
 
     modified_file = builder.build()
     print("wrap garmin device info sucess, product id:", GARMIN_DEVICE_PRODUCT_ID)
