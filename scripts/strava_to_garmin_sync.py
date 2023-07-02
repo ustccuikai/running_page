@@ -147,7 +147,7 @@ if __name__ == "__main__":
                 garmin_client,
                 strava_client,
                 strava_web_client,
-                DataFormat.FIT,
+                DataFormat.ORIGINAL,
                 options.use_fake_garmin_device,
             )
         )
