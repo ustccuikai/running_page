@@ -57,12 +57,12 @@ def do_wrap_device_info(origin_file):
 
     for record in fit_file.records:
         message = record.message
-    #    if message.global_id == FileIdMessage.ID:
-    #        if isinstance(message, FileIdMessage):
-    #            message.manufacturer = MANUFACTURER
-    #            message.garmin_product = GARMIN_DEVICE_PRODUCT_ID
-    #            message.product = GARMIN_DEVICE_PRODUCT_ID
-    #            message.type = 4  # Activity
+        if message.global_id == FileIdMessage.ID:
+            if isinstance(message, FileIdMessage):
+                message.manufacturer = MANUFACTURER
+                message.garmin_product = GARMIN_DEVICE_PRODUCT_ID
+                message.product = GARMIN_DEVICE_PRODUCT_ID
+                message.type = 4  # Activity
 
         builder.add(message)
 
