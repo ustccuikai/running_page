@@ -74,8 +74,9 @@ def make_gpx_from_points(title, points_dict_list):
     return gpx.to_xml()
 
 
-async def upload_to_activities(garmin_client, strava_client, strava_web_client, format):
-    files_list = []
+async def upload_to_activities(
+    garmin_client, strava_client, strava_web_client, format, use_fake_garmin_device
+):
     last_activity = await garmin_client.get_activities(0, 1)
     if not last_activity:
         print("no activity")
@@ -93,11 +94,13 @@ async def upload_to_activities(garmin_client, strava_client, strava_web_client, 
         filters = {"after": after_datetime}
     strava_activities = list(strava_client.get_activities(**filters))
     # strava rate limit
-    for i in strava_activities[:50]:
-        print(i.id)
-        data = strava_web_client.get_activity_data(i.id, fmt=format)
-        files_list.append(data)
-    await garmin_client.upload_activities_original(files_list)
+    for i in strava_activities[: len(strava_activities)]:
+        try:
+            data = strava_web_client.get_activity_data(i.id, fmt=format)
+            files_list.append(data)
+        except Exception as ex:
+            print("get strava data error: ", ex)
+    await garmin_client.upload_activities_original(files_list, use_fake_garmin_device)
     return files_list
 
 
@@ -116,7 +119,12 @@ if __name__ == "__main__":
         action="store_true",
         help="if garmin accout is cn",
     )
-
+    parser.add_argument(
+        "--use_fake_garmin_device",
+        action="store_true",
+        default=False,
+        help="whether to use a faked Garmin device",
+    )
     options = parser.parse_args()
     strava_client = make_strava_client(
         options.strava_client_id,
@@ -138,7 +146,11 @@ if __name__ == "__main__":
         loop = asyncio.get_event_loop()
         future = asyncio.ensure_future(
             upload_to_activities(
-                garmin_client, strava_client, strava_web_client, DataFormat.ORIGINAL
+                garmin_client,
+                strava_client,
+                strava_web_client,
+                DataFormat.ORIGINAL,
+                options.use_fake_garmin_device,
             )
         )
         loop.run_until_complete(future)
