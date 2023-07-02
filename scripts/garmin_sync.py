@@ -16,7 +16,7 @@ import traceback
 import aiofiles
 import cloudscraper
 import httpx
-from config import GPX_FOLDER, JSON_FILE, SQL_FILE, config
+from config import JSON_FILE, SQL_FILE, FOLDER_DICT, config
 from io import BytesIO
 from tenacity import retry, stop_after_attempt, wait_fixed
 
@@ -78,7 +78,6 @@ class Garmin:
         self.activity_url = self.URL_DICT.get("ACTIVITY_URL")
         self.is_login = False
 
-    @retry(stop=stop_after_attempt(5), wait=wait_fixed(30))
     @retry(stop=stop_after_attempt(5), wait=wait_fixed(30))
     def login(self):
         """
@@ -245,16 +244,16 @@ class Garmin:
                     self.upload_url, files=files, headers={"nk": "NT"}
                 )
                 os.remove(data.filename)
+                f.close()
             except Exception as e:
                 print(str(e))
                 # just pass for now
                 continue
             try:
                 resp = res.json()["detailedImportResult"]
-                print(resp)
+                print("garmin upload success: ", resp)
             except Exception as e:
-                print(e)
-                raise Exception("failed to upload")
+                print("garmin upload failed: ", e)
         await self.req.aclose()
 
 
