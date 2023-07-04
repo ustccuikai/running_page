@@ -43,6 +43,13 @@ def do_wrap_device_info(origin_file):
     fit_file = FitFile.from_bytes(origin_file.read())
     builder = FitFileBuilder(auto_define=True)
 
+    for record in fit_file.records:
+         message = record.message
+         if message.global_id == DeviceInfoMessage.ID:
+             # ignore file device info, like WorkoutDoors APP
+             continue
+         builder.add(message)
+
     # Add custom Device Info
     message = DeviceInfoMessage()
     # the serial number must be real, otherwise Garmin will not identify it
@@ -54,17 +61,6 @@ def do_wrap_device_info(origin_file):
     message.source_type = 5
     message.product = GARMIN_DEVICE_PRODUCT_ID
     builder.add(message)
-
-    for record in fit_file.records:
-        message = record.message
-        if message.global_id == FileIdMessage.ID:
-            if isinstance(message, FileIdMessage):
-                message.manufacturer = MANUFACTURER
-                message.garmin_product = GARMIN_DEVICE_PRODUCT_ID
-                message.product = GARMIN_DEVICE_PRODUCT_ID
-                message.type = 4  # Activity
-
-        builder.add(message)
 
     modified_file = builder.build()
     print("wrap garmin device info sucess, product id:", GARMIN_DEVICE_PRODUCT_ID)
