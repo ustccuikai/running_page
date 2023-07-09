@@ -67,14 +67,15 @@ def start_end_hiding(polyline: List[Tuple[float]], distance: int) -> List[Tuple[
 
 
 def filter_out(polyline_str):
-    pl = polyline.decode(polyline_str)
-    if not pl:
-        return polyline_str
+    return polyline_str;
+    #pl = polyline.decode(polyline_str)
+    #if not pl:
+    #    return polyline_str
 
-    new_pl = start_end_hiding(pl, IGNORE_START_END_RANGE)
-    new_pl = range_hiding(new_pl, IGNORE_POLYLINE, IGNORE_RANGE)
+    #new_pl = start_end_hiding(pl, IGNORE_START_END_RANGE)
+    #new_pl = range_hiding(new_pl, IGNORE_POLYLINE, IGNORE_RANGE)
 
-    if not new_pl:
+    #if not new_pl:
         return None
 
-    return polyline.encode(new_pl)
+    #return polyline.encode(new_pl)
