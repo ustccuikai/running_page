@@ -201,6 +201,22 @@ const USE_DASH_LINE = true;
 const LINE_OPACITY = 0.4;
 ```
 
+- 隐私保护：
+
+设置下面环境变量：
+
+```shell
+IGNORE_START_END_RANGE = 200 # 忽略每个 polyline 的起点和终点的长度（单位：米）。
+
+IGNORE_RANGE = 200 # 忽略下面 polyline 中每个点的距离的圆圈（单位：米）。
+IGNORE_POLYLINE = ktjrFoemeU~IorGq}DeB # 包含要忽略的点的折线。 
+
+# 在保存到数据库之前进行过滤，你会丢失一些数据，但可以保护你的隐私，如果你使用的是公共仓库，建议设置为1。不设置可关闭。
+IGNORE_BEFORE_SAVING = 1
+```
+
+你可一用[这个](https://developers.google.com/maps/documentation/utilities/polylineutility)，来制作你的 `IGNORE_POLYLINE`。如果你在中国，请使用卫星图制作，避免火星坐标漂移。
+
 ## 下载您的 Nike Run Club/Strava/Garmin/Garmin-cn/Keep 数据，[别忘了在 `total` 页面生成可视化 SVG](#total-data-analysis)
 
 ### GPX
@@ -411,7 +427,10 @@ python3(python) scripts/tulipsport_sync.py nLgy****RyahI
 <summary>获取您的 Garmin 数据</summary>
 <br>
 如果你只想同步跑步数据增加命令 --only-run
+
 如果你想同步 `tcx` 格式，增加命令 --tcx
+
+如果你想同步 `fit` 格式，增加命令 --fit
 
 ```python
 python3(python) scripts/garmin_sync.py ${your email} ${your password}
@@ -430,7 +449,11 @@ python3(python) scripts/garmin_sync.py example@gmail.com example
 <details>
 <summary>获取您的 Garmin-CN 数据</summary>
 
-> 如果你只想同步跑步数据请增加 --only-run
+如果你只想同步跑步数据请增加 --only-run
+
+如果你想同步 `tcx` 格式，增加命令 --tcx
+
+如果你想同步 `fit` 格式，增加命令 --fit
 
 ```python
 python3(python) scripts/garmin_sync.py ${your email} ${your password} --is-cn
@@ -541,6 +564,7 @@ curl -X POST https://www.strava.com/oauth/token \
 
 > 第一次同步 Strava 数据时需要更改在 strava_sync.py 中的第 12 行代码 False 改为 True，运行完成后，再改为 False。
 
+如果你只想同步跑步数据增加命令 --only-run
 ```python
 python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresh_token}
 ```

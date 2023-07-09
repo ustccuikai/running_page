@@ -192,6 +192,22 @@ const USE_DASH_LINE = true;
 const LINE_OPACITY = 0.4;
 ```
 
+- privacy protection
+
+setting flowing env:
+```shell
+IGNORE_START_END_RANGE = 200 # ignore distance for each polyline start and end.
+
+IGNORE_RANGE = 200 # ignore meters for each point in below polyline. 
+IGNORE_POLYLINE = ktjrFoemeU~IorGq}DeB # a polyline include point you want to ignore. 
+
+# Do filter before saving to database, you will lose some data, but you can protect your privacy, when you using public repo. enable for set 1, disable via unset.
+IGNORE_BEFORE_SAVING = 
+```
+
+You can using [this](https://developers.google.com/maps/documentation/utilities/polylineutility), to making your `IGNORE_POLYLINE`.
+
+
 ## Download your running data and do not forget to [generate svg in `total` page](#total-data-analysis)
 
 ### GPX
@@ -228,7 +244,10 @@ python3(python) scripts/tcx_sync.py
 <summary>Get your <code>Garmin</code> data</summary>
 <br>
 If you only want to sync `type running` add args --only-run
+
 If you only want `tcx` files add args --tcx
+
+If you only want `fit` files add args --fit
 
 ```python
 python3(python) scripts/garmin_sync.py ${your email} ${your password}
@@ -254,7 +273,10 @@ python3(python) scripts/garmin_sync.py example@gmail.com example --only-run
 <summary>Get your <code>Garmin-CN</code> data</summary>
 <br>
 If you only want to sync `type running` add args --only-run
+
 If you only want `tcx` files add args --tcx
+
+If you only want `fit` files add args --fit
 
 ```python
 python3(python) scripts/garmin_sync.py ${your email} ${your password} --is-cn
@@ -374,6 +396,7 @@ curl -X POST https://www.strava.com/oauth/token \
 7. Sync `Strava` data
 
 > The first time you synchronize Strava data you need to change line 12 of the code False to True in strava_sync.py, and then change it to False after it finishes running.
+If you only want to sync `type running` add args --only-run
 
 ```python
 python3(python) scripts/strava_sync.py ${client_id} ${client_secret} ${refresh_token}
