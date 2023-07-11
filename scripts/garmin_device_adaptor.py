@@ -3,7 +3,6 @@ import traceback
 from fit_tool.fit_file import FitFile
 from fit_tool.fit_file_builder import FitFileBuilder
 from fit_tool.profile.messages.device_info_message import DeviceInfoMessage
-from fit_tool.profile.messages.file_id_message import FileIdMessage
 from io import BytesIO
 
 # the device manufacturer and product info can be found in github,
@@ -44,11 +43,11 @@ def do_wrap_device_info(origin_file):
     builder = FitFileBuilder(auto_define=True)
 
     for record in fit_file.records:
-         message = record.message
-         if message.global_id == DeviceInfoMessage.ID:
-             # ignore file device info, like WorkoutDoors APP
-             continue
-         builder.add(message)
+        message = record.message
+        if message.global_id == DeviceInfoMessage.ID:
+            # ignore file device info, like WorkoutDoors APP
+            continue
+        builder.add(message)
 
     # Add custom Device Info
     message = DeviceInfoMessage()
