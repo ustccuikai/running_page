@@ -27,7 +27,7 @@ env:
   TITLE_GRID: Over 10km Runs
   GITHUB_NAME: ustccuikai
   GITHUB_EMAIL: ustccuikai@126.com
-  MIN_GRID_DISTANCE: 0.5
+  MIN_GRID_DISTANCE: 10
 
   # IGNORE_BEFORE_SAVING: True # if you want to ignore some data before saving, set this to True
   IGNORE_START_END_RANGE: 10 # Unit meter
