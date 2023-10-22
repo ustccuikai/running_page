@@ -71,7 +71,7 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 | [jianchengwang](https://github.com/jianchengwang) | <https://jianchengwang.github.io/running_page> | Suunto      |
 | [fxbin](https://github.com/fxbin)                 | <https://fxbin.github.io/sport-records/>       | Keep        |
 | [shensl4499](https://github.com/shensl4499)       | <https://waner.run>                            | codoon      |
-| [haowei93](https://github.com/haowei93)           | <https://haowei93.github.io/>                  | gpx         |
+| [haowei93](https://github.com/haowei93)           | <https://running-fun.eu.org>                   | gpx         |
 | [stevenash0822](https://github.com/stevenash0822) | <https://run.imangry.xyz/>                     | Strava      |
 | [Vint](https://github.com/VintLin)                | <https://vinton.store/Running/>                | Keep        |
 | [Muyids](https://github.com/muyids)               | <https://muyids.github.io/running>             | Garmin-cn   |
@@ -83,6 +83,7 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 | [deepinwine](https://github.com/deepinwine)       | <https://deepin.autove.dev/>                   | Garmin-cn   |
 | [Echo](https://github.com/donghao526)             | <https://donghao526.github.io/running>         | JoyRun      |
 | [Jeffggmm](https://github.com/Jeffggmm)           | <https://jeffggmm.github.io/workouts_page/>    | Garmin      |
+| [s1smart](https://github.com/s1smart)             | <https://s1smart.github.io/running_page/>      | Strava      |
 
 </details>
 
@@ -410,6 +411,12 @@ Created successfully:
 
 ```
 https://www.strava.com/oauth/authorize?client_id=${your_id}&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read_all,profile:read_all,activity:read_all,profile:write,activity:write
+```
+
+Example:
+
+```
+https://www.strava.com/oauth/authorize?client_id=115321&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read_all,profile:read_all,activity:read_all,profile:write,activity:write
 ```
 
 ![get_all_permissions](https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/get_all_permissions.png)
