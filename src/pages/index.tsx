@@ -21,6 +21,7 @@ import {
   scrollToMap,
   sortDateFunc,
   titleForShow,
+  RunIds,
 } from '@/utils/utils';
 
 const Index = () => {
@@ -47,6 +48,9 @@ const Index = () => {
     func: (_run: Activity, _value: string) => boolean
   ) => {
     scrollToMap();
+    if(name != 'Year'){
+      setYear(thisYear)
+    }
     setActivity(filterAndSortRuns(activities, item, func, sortDateFunc));
     setRunIndex(-1);
     setTitle(`${item} ${name} Running Heatmap`);
@@ -74,10 +78,12 @@ const Index = () => {
     changeByItem(title, 'Title', filterTitleRuns);
   };
 
-  const locateActivity = (runIds: [Number]) => {
+  const locateActivity = (runIds: RunIds) => {
     const ids = new Set(runIds);
 
-    const selectedRuns = runs.filter((r) => ids.has(r.run_id));
+    const selectedRuns = !runIds.length
+      ? runs
+      : runs.filter((r: any) => ids.has(r.run_id));
 
     if (!selectedRuns.length) {
       return;
