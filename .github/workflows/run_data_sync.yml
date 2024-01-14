@@ -190,17 +190,6 @@ jobs:
           git add .
           git commit -m 'update new runs' || echo "nothing to commit"
           git push || echo "nothing to push"
-          
-
-      - name: sync gitee
-        uses: Yikun/hub-mirror-action@master
-        with:
-          src: github/ustccuikai
-          dst: gitee/ustccuikai
-          dst_key: ${{ secrets.DST_KEY }}
-          dst_token: ${{ secrets.DST_TOKEN }}
-          force_update: true
-          static_list: "running_page"
 
       - name: Set Output
         id: set_output
