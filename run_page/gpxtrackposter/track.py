@@ -6,6 +6,7 @@
 # license that can be found in the LICENSE file.
 
 import datetime
+from datetime import timezone
 import os
 from collections import namedtuple
 
@@ -51,6 +52,7 @@ class Track:
         self.run_id = 0
         self.start_latlng = []
         self.type = "Run"
+        self.device = ""
 
     def load_gpx(self, file_name):
         """
@@ -232,12 +234,13 @@ class Track:
         _polylines = []
         self.polyline_container = []
         message = fit["session_mesgs"][0]
-        self.start_time = datetime.datetime.utcfromtimestamp(
-            (message["start_time"] + FIT_EPOCH_S)
+        self.start_time = datetime.datetime.fromtimestamp(
+            (message["start_time"] + FIT_EPOCH_S), tz=timezone.utc
         )
         self.run_id = self.__make_run_id(self.start_time)
-        self.end_time = datetime.datetime.utcfromtimestamp(
-            (message["start_time"] + FIT_EPOCH_S + message["total_elapsed_time"])
+        self.end_time = datetime.datetime.fromtimestamp(
+            (message["start_time"] + FIT_EPOCH_S + message["total_elapsed_time"]),
+            tz=timezone.utc,
         )
         self.length = message["total_distance"]
         self.average_heartrate = (
@@ -280,6 +283,14 @@ class Track:
                 self.start_time, self.end_time, None
             )
 
+        # The FIT file created by Garmin
+        if "file_id_mesgs" in fit:
+            device_message = fit["file_id_mesgs"][0]
+            if "manufacturer" in device_message:
+                self.device = device_message["manufacturer"]
+            if "garmin_product" in device_message:
+                self.device += " " + device_message["garmin_product"]
+
     def append(self, other):
         """Append other track to self."""
         self.end_time = other.end_time
@@ -319,10 +330,14 @@ class Track:
             ),
         }
 
-    def to_namedtuple(self):
+    def to_namedtuple(self, run_from="gpx"):
         d = {
             "id": self.run_id,
-            "name": "run from gpx",  # maybe change later
+            "name": (
+                f"run from {run_from} by {self.device}"
+                if self.device
+                else f"run from {run_from}"
+            ),  # maybe change later
             "type": "Run",  # Run for now only support run for now maybe change later
             "start_date": self.start_time.strftime("%Y-%m-%d %H:%M:%S"),
             "end": self.end_time.strftime("%Y-%m-%d %H:%M:%S"),

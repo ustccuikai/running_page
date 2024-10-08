@@ -2,9 +2,11 @@
 import argparse
 import json
 import os
+import subprocess
+import sys
 import time
 from collections import namedtuple
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from hashlib import md5
 from urllib.parse import quote
 
@@ -207,7 +209,7 @@ class Joyrun:
             points_dict = {
                 "latitude": point[0],
                 "longitude": point[1],
-                "time": datetime.utcfromtimestamp(current_time),
+                "time": datetime.fromtimestamp(current_time, tz=timezone.utc),
             }
             points_dict_list.append(points_dict)
 
@@ -222,7 +224,7 @@ class Joyrun:
             {
                 "latitude": run_points_data[-1][0],
                 "longitude": run_points_data[-1][1],
-                "time": datetime.utcfromtimestamp(end_time),
+                "time": datetime.fromtimestamp(end_time, tz=timezone.utc),
             }
         )
         segment_list.append(points_dict_list)
@@ -287,9 +289,9 @@ class Joyrun:
 
         polyline_str = polyline.encode(run_points_data) if run_points_data else ""
         start_latlng = start_point(*run_points_data[0]) if run_points_data else None
-        start_date = datetime.utcfromtimestamp(start_time)
+        start_date = datetime.fromtimestamp(start_time, tz=timezone.utc)
         start_date_local = adjust_time(start_date, BASE_TIMEZONE)
-        end = datetime.utcfromtimestamp(end_time)
+        end = datetime.fromtimestamp(end_time, tz=timezone.utc)
         # only for China now
         end_local = adjust_time(end, BASE_TIMEZONE)
         location_country = None
@@ -336,11 +338,94 @@ class Joyrun:
         return tracks
 
 
+def _generate_svg_profile(athlete, min_grid_distance):
+    # To generate svg for 'Total' in the left-up map
+    if not athlete:
+        # Skip to avoid override
+        print("Skipping gen_svg. Fill your name with --athlete if you don't want skip")
+        return
+    print(
+        f"Running scripts for [Make svg GitHub profile] with athlete={athlete} min_grid_distance={min_grid_distance}"
+    )
+    cmd_args_list = [
+        [
+            sys.executable,
+            "run_page/gen_svg.py",
+            "--from-db",
+            "--title",
+            f"{athlete} Running",
+            "--type",
+            "github",
+            "--athlete",
+            athlete,
+            "--special-distance",
+            "10",
+            "--special-distance2",
+            "20",
+            "--special-color",
+            "yellow",
+            "--special-color2",
+            "red",
+            "--output",
+            "assets/github.svg",
+            "--use-localtime",
+            "--min-distance",
+            "0.5",
+        ],
+        [
+            sys.executable,
+            "run_page/gen_svg.py",
+            "--from-db",
+            "--title",
+            f"Over {min_grid_distance} Running",
+            "--type",
+            "grid",
+            "--athlete",
+            athlete,
+            "--special-distance",
+            "20",
+            "--special-distance2",
+            "40",
+            "--special-color",
+            "yellow",
+            "--special-color2",
+            "red",
+            "--output",
+            "assets/grid.svg",
+            "--use-localtime",
+            "--min-distance",
+            str(min_grid_distance),
+        ],
+        [
+            sys.executable,
+            "run_page/gen_svg.py",
+            "--from-db",
+            "--type",
+            "circular",
+            "--use-localtime",
+        ],
+    ]
+    for cmd_args in cmd_args_list:
+        subprocess.run(cmd_args, check=True)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("phone_number_or_uid", help="joyrun phone number or uid")
     parser.add_argument(
         "identifying_code_or_sid", help="joyrun identifying_code from sms or sid"
+    )
+    parser.add_argument(
+        "--athlete",
+        dest="athlete",
+        help="athlete, keep same with {env.ATHLETE}",
+    )
+    parser.add_argument(
+        "--min_grid_distance",
+        dest="min_grid_distance",
+        help="min_grid_distance, keep same with {env.MIN_GRID_DISTANCE}",
+        type=int,
+        default=10,
     )
     parser.add_argument(
         "--with-gpx",
@@ -374,3 +459,6 @@ if __name__ == "__main__":
     activities_list = generator.load()
     with open(JSON_FILE, "w") as f:
         json.dump(activities_list, f)
+
+    print("Data export to DB done")
+    _generate_svg_profile(options.athlete, options.min_grid_distance)
