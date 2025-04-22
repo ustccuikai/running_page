@@ -3,13 +3,23 @@
 1. clone or Fork before vercel 404 need to pull the latest code
 2. python3(python) in README means python3 python
 3. use v2.0 need change vercel setting from gatsby to vite
-4. 2023.09.26 garmin need secret_string(and in Actions) get
+4. 2023.09.26 garmin need secret_string(and in Actions) get    
+    ```bash
+      python run_page/get_garmin_secret.py ${email} ${password}
+      # if cn
+      python run_page/get_garmin_secret.py ${email} ${password} --is-cn
+    ```
 
-```bash
-  python run_page/get_garmin_secret.py ${email} ${password}
-  # if cn
-  python run_page/get_garmin_secret.py ${email} ${password} --is-cn
-```
+5. 2024.09.29: Added `Elevation Gain` field, If you forked the project before this update, please run the following command:
+    - To resolve errors: `sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: activities.elevation_gain`
+    - If you don't have a local environment, set `RUN_TYPE` to `db_updater` in the `.github/workflows/run_data_sync.yml` file once then change back. 
+
+    ```bash
+      python run_page/db_updater.py
+    ```
+    - For old data: To include `Elevation Gain` for past activities, perform a full reimport. 
+    - To show the 'Elevation Gain' column, modify `SHOW_ELEVATION_GAIN` in `src/utils/const.ts`
+    - note: `Elevation Gain` may be inaccurate. You can use Strava's "Correct Elevation" or Garmin's "Elev Corrections" feature for more precise data. 
 
 <p align="center">
   <img width="150" src="https://raw.githubusercontent.com/shaonianche/gallery/master/running_page/running_page_logo.png" />
@@ -107,7 +117,9 @@ English | [简体中文](https://github.com/yihong0618/running_page/blob/master/
 | [Samuel](https://github.com/SamuelDixxon)         | <https://samueldixxon.github.io/running_page/> | Keep        |
 | [Evan](https://github.com/LinghaoChan)            | <https://github.com/LinghaoChan/running>       | Keep        |
 | [Shuqi](https://github.com/zhufengme)             | <https://runner-shuqi.devlink.cn/>             | Garmin      |
-| [shugoal](https://github.com/shugoal)            | <https://shugoal.github.io/wk-shu/>             | Garmin      |
+| [shugoal](https://github.com/shugoal)             | <https://shugoal.github.io/wk-shu/>            | Garmin      |
+| [Daniel](https://danielyu316.github.io/running_page)            | <https://danielyu316.github.io/running_page/>             | Codoon      |
+| [arthurfsy2](https://github.com/arthurfsy2)       | <https://fsy.4a1801.life>                      | Garmin      |
 </details>
 
 ## How it works
@@ -241,6 +253,8 @@ const PRIVACY_MODE = true;
 // update for now 2024/11/17 the lights on default is false
 // styling: set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
 const LIGHTS_ON = false;
+// set to `true` if you want to show the 'Elevation Gain' column
+const SHOW_ELEVATION_GAIN = true;
 ```
 
 - To use Google Analytics, you need to modify the configuration in the `src/utils/const.ts` file.
