@@ -12,7 +12,6 @@
    ```
 
 5. 2024.09.29: Added `Elevation Gain` field, If you forked the project before this update, please run the following command:
-
    - To resolve errors: `sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: activities.elevation_gain`
    - If you don't have a local environment, set `RUN_TYPE` to `db_updater` in the `.github/workflows/run_data_sync.yml` file once then change back.
 
@@ -159,7 +158,6 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 - **[Garmin-cn](#garmin-cn-大陆用户使用)**
 - **[Keep](#keep)**
 - **[悦跑圈](#joyrun悦跑圈)** ：限制单个设备，无法自动化
-- **[咕咚](#codoon咕咚)** ：限制单个设备，无法自动化
 - **[郁金香运动](#tulipsport)**
 - **[GPX](#gpx)**
 - **[TCX](#tcx)**
@@ -486,73 +484,6 @@ python run_page/joyrun_sync.py 1393xx30xxxx 97e5fe4997d20f9b1007xxxxx --from-uid
 
 ```bash
 python run_page/joyrun_sync.py 13333xxxx xxxx --athlete yihong0618 --min_grid_distance 5
-```
-
-</details>
-
-### Codoon（咕咚）
-
-> 因悦跑圈限制单个设备，无法自动化。
-
-<details>
-<summary>获取您的咕咚数据</summary>
-
-<br>
-
-```bash
-python run_page/codoon_sync.py ${your mobile or email} ${your password}
-```
-
-示例：
-
-```bash
-python run_page/codoon_sync.py 13333xxxx xxxx
-```
-
-Codoon 导出 gpx
-
-> 导出的 gpx 在 GPX_OUT 目录，方便上传到其它软件
-
-```bash
-python run_page/codoon_sync.py ${your mobile or email} ${your password} --with-gpx
-```
-
-示例：
-
-```bash
-python run_page/codoon_sync.py 13333xxxx xxxx --with-gpx
-```
-
-> 因为登录 token 有过期时间限制，我增加了 refresh_token&user_id 登陆的方式，refresh_token 及 user_id 在您登陆过程中会在控制台打印出来
-
-![image](https://user-images.githubusercontent.com/6956444/105690972-9efaab00-5f37-11eb-905c-65a198ad2300.png)
-
-示例：
-
-```bash
-python run_page/codoon_sync.py 54bxxxxxxx fefxxxxx-xxxx-xxxx --from-auth-token
-```
-
-</details>
-
-<details>
-<summary>路线偏移修正</summary>
-
-<br>
-
-如果您得到的运动路线与实际路线对比有整体偏移，可以修改代码中的参数进行修正
-
-> 咕咚最初采用 GCJ-02 坐标系，在 2014 年 3 月份左右升级为 WGS-84 坐标系，导致升级之前的运动数据在使用 WGS-84 坐标系的平台（Mapbox、佳明等）中显示轨迹整体偏移
-
-- 修改 `run_page/codoon_sync.py` 文件中的参数：
-
-> TRANS_END_DATE 需要根据您的实际情况设定，程序会修正这一天之前的运动记录
-
-```python
-# If your points need trans from gcj02 to wgs84 coordinate which use by Mapbox
-TRANS_GCJ02_TO_WGS84 = True
-# trans the coordinate data until the TRANS_END_DATE, work with TRANS_GCJ02_TO_WGS84 = True
-TRANS_END_DATE = "2014-03-24"
 ```
 
 </details>
@@ -1222,12 +1153,10 @@ python3 run_page/auto_share_sync.py --api_key xxxxxxxxx --base_url xxxxxxxx --da
 1. 进入仓库的 "Settings -> GitHub Pages -> Source"，选择 "GitHub Actions"
 
 2. 进入仓库的 "Actions -> Workflows -> All Workflows"，选择左侧面板的 "Run Data Sync"，然后点击 "Run workflow"
-
    - "Run Data Sync" 将更新数据，然后触发 "Publish GitHub Pages" 工作流
    - 确认工作流运行没有错误
 
 3. 打开网站检查结果
-
    - 如果网站没有反映最新数据，请使用“F5”刷新页面
    - 某些浏览器 (比如 Chrome) 可能缓存网页不刷新，您需要使用 Ctrl+F5 (Windows) 或 Shift+Cmd+r (Mac) 强制清除缓存并重新加载页面
 
@@ -1285,7 +1214,6 @@ Actions [源码](https://github.com/yihong0618/running_page/blob/master/.github/
    <center><img src="https://cdn.jujimeizuo.cn/blog/2023/10/get-action-id.jpg" alt="get-action-id"></center>
 
 2. 结合快捷指令
-
    1. 通过 iCloud 获取 [running-page-shortcuts-template](https://www.icloud.com/shortcuts/4a5807a98b9a4e359815ff179c62bacb)
    2. 修改下图字典参数
 
