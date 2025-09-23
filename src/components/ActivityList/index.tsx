@@ -270,7 +270,18 @@ const ActivityList: React.FC = () => {
     setSportTypeOptions(uniqueSportTypes);
   }, []);
 
+  // 添加useEffect监听interval变化
+  useEffect(() => {
+    if (interval === 'life' && sportType !== 'all') {
+      setSportType('all');
+    }
+  }, [interval, sportType]);
+
   const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate('/');
+  };
 
   const toggleInterval = (newInterval: IntervalType): void => {
     setInterval(newInterval);
@@ -396,10 +407,7 @@ const ActivityList: React.FC = () => {
   return (
     <div className={styles.activityList}>
       <div className={styles.filterContainer}>
-        <button
-          className={styles.smallHomeButton}
-          onClick={() => navigate('/')}
-        >
+        <button className={styles.smallHomeButton} onClick={handleHomeClick}>
           {HOME_PAGE_TITLE}
         </button>
         <select
@@ -407,7 +415,11 @@ const ActivityList: React.FC = () => {
           value={sportType}
         >
           {sportTypeOptions.map((type) => (
-            <option key={type} value={type}>
+            <option
+              key={type}
+              value={type}
+              disabled={interval === 'life' && type !== 'all'}
+            >
               {type}
             </option>
           ))}
