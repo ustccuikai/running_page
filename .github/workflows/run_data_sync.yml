@@ -79,7 +79,11 @@ jobs:
         with:
           path: |
             activities
-            assets
+            assets/github*.svg
+            assets/grid.svg
+            assets/mol*.svg
+            assets/year_*.svg
+            assets/year_summary_*.svg
             GPX_OUT
             TCX_OUT
             FIT_OUT
@@ -91,6 +95,11 @@ jobs:
           restore-keys: |
             ${{ env.DATA_CACHE_PREFIX }}-${{ github.sha }}-
             ${{ env.DATA_CACHE_PREFIX }}-
+
+      - name: Restore source assets after cache
+        if: env.SAVE_DATA_IN_GITHUB_CACHE == 'true'
+        run: |
+          git restore --source=HEAD --worktree -- assets/index.tsx assets/start.svg assets/end.svg
 
       - name: Run sync Nike script
         if: env.RUN_TYPE == 'nike'

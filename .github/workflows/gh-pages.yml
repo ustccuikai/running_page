@@ -58,7 +58,11 @@ jobs:
         with:
           path: |
             activities
-            assets
+            assets/github*.svg
+            assets/grid.svg
+            assets/mol*.svg
+            assets/year_*.svg
+            assets/year_summary_*.svg
             GPX_OUT
             TCX_OUT
             FIT_OUT
@@ -70,6 +74,11 @@ jobs:
           restore-keys: |
             ${{ inputs.data_cache_prefix }}-${{ github.sha }}-
             ${{ inputs.data_cache_prefix }}-
+
+      - name: Restore source assets after cache
+        if: inputs.save_data_in_github_cache
+        run: |
+          git restore --source=HEAD --worktree -- assets/index.tsx assets/start.svg assets/end.svg
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
