@@ -34,9 +34,32 @@ class GithubDrawer(TracksDrawer):
     def fetch_args(self, args):
         self.empty_color = args.github_empty_data_color
 
+    def _define_indoor_pattern(self, dr: svgwrite.Drawing):
+        """Define a diagonal stripe SVG pattern for indoor activity days."""
+        pattern = dr.pattern(
+            id="indoor-stripe",
+            size=(2, 2),
+            patternUnits="userSpaceOnUse",
+        )
+        pattern.add(
+            dr.line(
+                (0, 2),
+                (2, 0),
+                stroke="white",
+                stroke_width=0.5,
+                stroke_opacity=0.45,
+            )
+        )
+        dr.defs.add(pattern)
+
+    def _has_indoor_track(self, tracks):
+        """Check if any track in the list is an indoor activity."""
+        return any(getattr(t, "subtype", None) == "indoor" for t in tracks)
+
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw")
+        self._define_indoor_pattern(dr)
         year_size = 200 * 4.0 / 80.0
         year_style = f"font-size:{year_size}px; font-family:Arial;"
         year_length_style = f"font-size:{110 * 3.0 / 80.0}px; font-family:Arial;"
@@ -102,9 +125,6 @@ class GithubDrawer(TracksDrawer):
                     "Nov",
                     "Dec",
                 ]
-            km_or_mi = "mi"
-            if self.poster.units == "metric":
-                km_or_mi = "km"
             dr.add(
                 dr.text(
                     f"{year}",
@@ -117,7 +137,7 @@ class GithubDrawer(TracksDrawer):
 
             dr.add(
                 dr.text(
-                    f"{year_length} {km_or_mi}",
+                    f"{year_length} {self.poster.u()}",
                     insert=(offset.tuple()[0] + 165, offset.tuple()[1] + 5),
                     fill=self.poster.colors["text"],
                     dominant_baseline="hanging",
@@ -160,20 +180,32 @@ class GithubDrawer(TracksDrawer):
                         length = sum([t.length for t in tracks])
                         distance1 = self.poster.special_distance["special_distance"]
                         distance2 = self.poster.special_distance["special_distance2"]
-                        has_special = distance1 < length / 1000 < distance2
+                        has_special = distance1 < self.poster.m2u(length) < distance2
                         color = self.color(
                             self.poster.length_range_by_date, length, has_special
                         )
-                        if length / 1000 >= distance2:
+                        if self.poster.m2u(length) >= distance2:
                             color = self.poster.colors.get(
                                 "special2"
                             ) or self.poster.colors.get("special")
                         str_length = format_float(self.poster.m2u(length))
-                        date_title = f"{date_title} {str_length} {km_or_mi}"
+                        date_title = f"{date_title} {str_length} {self.poster.u()}"
 
                     rect = dr.rect((rect_x, rect_y), dom, fill=color)
                     rect.set_desc(title=date_title)
                     dr.add(rect)
+                    # Add diagonal stripe overlay for indoor days
+                    day_key = date_title.split(" ")[0]
+                    if day_key in self.poster.tracks_by_date:
+                        if self._has_indoor_track(self.poster.tracks_by_date[day_key]):
+                            dr.add(
+                                dr.rect(
+                                    (rect_x, rect_y),
+                                    dom,
+                                    fill="url(#indoor-stripe)",
+                                    style="pointer-events: none;",
+                                )
+                            )
                     github_rect_day += datetime.timedelta(1)
                 rect_x += 3.5
             offset.y += 3.5 * 9 + year_size + 1.0

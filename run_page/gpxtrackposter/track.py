@@ -139,6 +139,14 @@ class Track:
         self.polylines = [[s2.LatLng.from_degrees(p[0], p[1]) for p in polyline_data]]
         self.run_id = activity.run_id
         self.type = get_normalized_sport_type(activity.type)
+        self.subtype = activity.subtype if hasattr(activity, "subtype") else None
+        # Load moving_dict from database
+        self.moving_dict = {
+            "distance": self.length,
+            "moving_time": activity.moving_time,
+            "elapsed_time": activity.elapsed_time,
+            "average_speed": activity.average_speed or 0,
+        }
 
     def bbox(self):
         """Compute the smallest rectangle that contains the entire track (border box)."""
@@ -392,11 +400,9 @@ class Track:
         self.moving_dict["elapsed_time"] = datetime.timedelta(
             seconds=message["total_elapsed_time"]
         )
-        self.moving_dict["average_speed"] = (
-            message["enhanced_avg_speed"]
-            if message["enhanced_avg_speed"]
-            else message["avg_speed"]
-        )
+        self.moving_dict["average_speed"] = message.get(
+            "enhanced_avg_speed"
+        ) or message.get("avg_speed", 0)
         for record in fit["record_mesgs"]:
             if "position_lat" in record and "position_long" in record:
                 lat = record["position_lat"] / SEMICIRCLE

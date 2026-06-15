@@ -1,5 +1,7 @@
 import React from 'react';
-import { pathForRun, Activity } from '@/utils/utils';
+import { pathForRun } from '@/utils/geoUtils';
+import type { Activity } from '@/utils/utils';
+import { NO_ROUTE_DATA, INVALID_ROUTE_DATA, INDOOR_COLOR } from '@/utils/const';
 import styles from './style.module.css';
 
 interface RoutePreviewProps {
@@ -19,27 +21,32 @@ const RoutePreview: React.FC<RoutePreviewProps> = ({
   if (activitiesWithRoutes.length === 0) {
     return (
       <div className={`${styles.routePreview} ${className || ''}`}>
-        <div className={styles.noRoute}>暂无路线数据</div>
+        <div className={styles.noRoute}>{NO_ROUTE_DATA}</div>
       </div>
     );
   }
 
   // Get all route coordinates
-  const allCoordinates: Array<{ path: [number, number][]; color: string }> =
-    activitiesWithRoutes.map((activity, index) => {
-      const path = pathForRun(activity);
-      // Use different colors for multiple routes
-      const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
-      const color = colors[index % colors.length];
-      return { path, color };
-    });
+  const allCoordinates: Array<{
+    path: [number, number][];
+    color: string;
+    indoor: boolean;
+  }> = activitiesWithRoutes.map((activity, index) => {
+    const path = pathForRun(activity);
+    const indoor =
+      activity.subtype === 'indoor' || activity.subtype === 'treadmill';
+    // Use different colors for multiple routes
+    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
+    const color = indoor ? INDOOR_COLOR : colors[index % colors.length];
+    return { path, color, indoor };
+  });
 
   // Calculate bounding box for all routes
   const allPoints = allCoordinates.flatMap((route) => route.path);
   if (allPoints.length === 0) {
     return (
       <div className={`${styles.routePreview} ${className || ''}`}>
-        <div className={styles.noRoute}>路线数据无效</div>
+        <div className={styles.noRoute}>{INVALID_ROUTE_DATA}</div>
       </div>
     );
   }
@@ -89,8 +96,9 @@ const RoutePreview: React.FC<RoutePreviewProps> = ({
         />
 
         {/* Routes */}
-        {allCoordinates.map((route, routeIndex) => {
+        {allCoordinates.map((route) => {
           if (route.path.length < 2) return null;
+          const routeKey = `${route.color}-${route.indoor}-${route.path.length}-${route.path[0].join(',')}-${route.path[route.path.length - 1].join(',')}`;
 
           const pathString = route.path
             .map((coord, index) => {
@@ -100,7 +108,7 @@ const RoutePreview: React.FC<RoutePreviewProps> = ({
             .join(' ');
 
           return (
-            <g key={routeIndex}>
+            <g key={routeKey}>
               {/* Route line */}
               <path
                 d={pathString}
@@ -109,7 +117,8 @@ const RoutePreview: React.FC<RoutePreviewProps> = ({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                opacity="0.8"
+                opacity={route.indoor ? 0.6 : 0.8}
+                strokeDasharray={route.indoor ? '4,3' : undefined}
               />
 
               {/* Start point */}

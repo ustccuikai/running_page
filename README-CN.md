@@ -22,7 +22,7 @@
    - For old data: To include `Elevation Gain` for past activities, perform a full reimport.
    - To show the 'Elevation Gain' column, modify `SHOW_ELEVATION_GAIN` in `src/utils/const.ts`
    - note: `Elevation Gain` may be inaccurate. You can use Strava's "Correct Elevation" or Garmin's "Elev Corrections" feature for more precise data.
-6. 请使用自己的 mapxbox token 参考这个 [issue](https://github.com/yihong0618/running_page/issues/643)
+6. 本项目现在默认使用 MapCN（免费）。如果你选择使用 Mapbox，请获取你自己的 token。请勿使用项目维护者的 token - 查看此 [issue](https://github.com/yihong0618/running_page/issues/643) 和 [issue #1055](https://github.com/yihong0618/running_page/issues/1055)
 
 ![running_page](https://socialify.git.ci/yihong0618/running_page/image?description=1&font=Inter&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fshaonianche%2Fgallery%2Fmaster%2Frunning_page%2Frunning_page_logo_150*150.jpg&owner=1&pulls=1&stargazers=1&theme=Light)
 
@@ -125,6 +125,11 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 | [Bolyn](https://run.wbolyn.com)                   | <https://run.wbolyn.com>                       | Coros       |
 | [LeiChen](https://github.com/xthirty77)           | <https://xthirty77.github.io/running_page/>    | Coros       |
 | [itrunner](https://itrunner.cn)                   | <https://itrunner.cn>                          | Garmin      |
+| [maslke](https://github.com/maslke)               | <https://maslke.space/running_page/>           | Garmin-cn   |
+| [Niewei Yang](https://github.com/Niewei-Yang)     | <https://neewii-worksout.vercel.app/>          | Strava      |
+| [RUN.LOG](https://github.com/bzzd2001)            | <https://run.731558.xyz:6881/>                 | Strava      |
+| [StoneRicky](https://github.com/StoneRicky)       | <https://stonericky.github.io/running_page/>   | COROS       |
+| [coutureone](https://github.com/coutureone)          | <https://run.xcouture.cc/>                     | Garmin      |
 </details>
 
 ## 它是怎么工作的
@@ -138,6 +143,7 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 3. React Hooks
 4. Mapbox 进行地图展示
 5. Nike、Strava、佳明（佳明中国）及 Keep 等，自动备份 GPX 数据，方便备份及上传到其它软件
+6. 支持终端界面（TUI）本地浏览运动数据
 
 > 因为数据存在 gpx 和 data.db 中，理论上支持几个软件一起，你可以把之前各类 App 的数据都同步到这里（建议本地同步，之后 Actions 选择正在用的 App）
 >
@@ -176,6 +182,7 @@ R.I.P. 希望大家都能健康顺利的跑过终点，逝者安息。
 - **[iGPSPORT迹驰](#igpsport)**
 - **[Komoot](#komoot)**
 - **[Onelap](#onelap)**
+- **[Intervals.icu](#intervalsicu)**
 
 ## 视频教程
 
@@ -197,6 +204,30 @@ pnpm develop
 ```
 
 访问 <http://localhost:5173/> 查看
+
+## TUI（终端界面）
+
+你可以在终端中使用内置的 Textual TUI 浏览运动数据。
+
+```bash
+# 使用 make
+make tui
+
+# 或直接用 uv 运行
+uv run run_page
+
+# 或指定自定义的 activities.json 路径
+uv run run_page /path/to/your/activities.json
+```
+
+TUI 中的键盘快捷键：
+
+- `1` / `2` – 切换列表和统计视图
+- `←` / `→` – 切换年份
+- `↑` / `↓` – 选择活动
+- `y` – 循环切换年份
+- `t` – 循环切换运动类型
+- `q` – 退出
 
 ## Docker
 
@@ -234,8 +265,7 @@ docker run -itd -p 80:80   running_page:latest
 > 如果你是海外用户请更改 `IS_CHINESE = false` in `src/utils/const.ts`
 
 ```typescript
-const MAPBOX_TOKEN =
-  'pk.eyJ1IjoieWlob25nMDYxOCIsImEiOiJja2J3M28xbG4wYzl0MzJxZm0ya2Fua2p2In0.PNKfkeQwYuyGOTT_x9BJ4Q';
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 ```
 
 ## 更改默认地图服务样式
@@ -243,25 +273,53 @@ const MAPBOX_TOKEN =
 > 在使用默认的地图服务样式之外，你可以通过修改 src/utils/const.ts 文件中的以下配置项来自定义地图显示。
 
 ```typescript
-const MAP_TILE_VENDOR = 'maptiler';
-const MAP_TILE_STYLE = 'winter-dark';
-const MAP_TILE_ACCESS_TOKEN = '你的 access token';
+const MAP_TILE_VENDOR = 'mapcn'; // 默认（免费！）
+const MAP_TILE_STYLE = 'osm-bright';
+const MAP_TILE_ACCESS_TOKEN = ''; // MapCN 不需要 token
 ```
 
 目前，支持的 MAP_TILE_VENDOR 选项包括：
 
-- **"mapbox"** - Mapbox 地图服务
+- **"mapcn"** - MapCN 地图服务（免费，无需 token）⭐ 默认推荐
+- **"mapbox"** - Mapbox 地图服务（需要 token，有费用）
+- **"maptiler"** - MapTiler 地图服务（有免费额度）
+- **"stadiamaps"** - Stadia Maps 地图服务（有免费额度）
 
-- **"maptiler"** - MapTiler 地图服务
+使用 MapCN（默认）
+MapCN 是免费的地图服务提供商，现在是默认选项，无需配置！
 
-- **"stadiamaps"** - Stadia Maps 地图服务
+可用的 MapCN 样式：
+
+- **osm-bright** - 明亮的 OpenStreetMap 样式（默认）
+- **osm-liberty** - 备选明亮样式
+- **dark-matter** - 深色主题样式
+
+**无需访问令牌！** 🎉
+
+## 版权归属
+
+当使用 MapCN (Carto Basemaps) 时，请确保遵守其版权归属要求：
+
+- 地图瓦片: © [CARTO](https://carto.com/)
+- 地图数据: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors
+
+本项目模板已在地图显示中包含了相应的版权声明。
+
+## 使用其他提供商
+如果你更喜欢 Mapbox、MapTiler 或 Stadia Maps，你可以更改供应商：
+
+```typescript
+const MAP_TILE_VENDOR = 'mapbox'; // 或 'maptiler' 或 'stadiamaps'
+const MAP_TILE_STYLE = 'dark-v10'; // 所选供应商的样式
+const MAP_TILE_ACCESS_TOKEN = 'your_access_token_here';
+```
 
 每个`MAP_TILE_VERNDOR`都提供了多种`MAP_TILE_STYLE`选择，配置时需保证匹配。具体的`MAP_TILE_STYLE`名称，可参考`src/utils/const.ts`文件中的定义。
 
-当使用 **"maptiler"** 或是 **"stadiamaps"** 时，需配置`MAP_TILE_ACCESS_TOKEN`。默认的 token 在不更改的情况下，使用时会发生配额超限的问题。
+当使用 **"mapbox"**、**"maptiler"** 或是 **"stadiamaps"** 时，需配置`MAP_TILE_ACCESS_TOKEN`。默认的 token 在不更改的情况下，使用时会发生配额超限的问题。
 
+- **Mapbox**: 在 https://www.mapbox.com/ 注册（有使用成本）
 - **MapTiler**: 在 https://cloud.maptiler.com/auth/widget 注册获取（免费）
-
 - **Stadia Maps**: 在 https://client.stadiamaps.com/signup/ 注册获取（免费）
 
 ## 个性化设置
@@ -704,6 +762,9 @@ python run_page/nike_sync.py eyJhbGciThiMTItNGIw******
 
 <br>
 
+> [!NOTE]
+> Strava 在 2026 年 6 月更新了 Developer Program。如果你使用 Strava 作为数据源，或者先把其它平台的数据上传到 Strava 再同步，请先在 [Strava API settings dashboard](https://www.strava.com/settings/api) 检查自己的 app tier。Standard Tier 开发者需要拥有 Strava 订阅才能访问 API；已有 Standard Tier 开发者会从 2026 年 6 月 30 日开始受到影响。详情见 [Strava 官方公告](https://communityhub.strava.com/insider-journal-9/an-update-to-our-developer-program-13428)。
+
 1. 注册/登陆 [Strava](https://www.strava.com/) 账号
 2. 登陆成功后打开 [Strava Developers](http://developers.strava.com) -> [Create & Manage Your App](https://strava.com/settings/api)
 
@@ -1035,6 +1096,48 @@ python3 run_page/komoot_sync.py 'your komoot email' 'password' --with-gpx
 ```bash
 python3 run_page/onelap_sync.py 'your onelap phone' 'password' --with-fit
 ```
+
+</details>
+
+### Intervals.icu
+
+<details>
+<summary>获取您的 <code>Intervals.icu</code> 数据</summary>
+
+<br>
+
+从 [Intervals.icu](https://intervals.icu) 同步跑步数据，下载原始 FIT/GPX 文件。
+
+1. 登录 [Intervals.icu](https://intervals.icu)，前往 **Settings** → **Developer Settings** 查看您的 **Athlete ID** 并创建 **API Key**。
+
+2. 在根目录下执行：
+
+```bash
+python run_page/intervals_icu_sync.py ${athlete_id} ${api_key}
+```
+
+如果需要同步所有历史数据（默认为最近 6 个月）：
+
+```bash
+python run_page/intervals_icu_sync.py ${athlete_id} ${api_key} --all
+```
+
+指定自定义起始日期：
+
+```bash
+python run_page/intervals_icu_sync.py ${athlete_id} ${api_key} --start-date 2024-01-01
+```
+
+如果你的数据来自华为等使用 GCJ-02 坐标系的国行设备，添加 `--gcj02` 参数可修复坐标偏移（将下载的 FIT/GPX/TCX 文件中的 GCJ-02 坐标转换为 WGS-84）：
+
+```bash
+python run_page/intervals_icu_sync.py ${athlete_id} ${api_key} --gcj02
+```
+
+#### GitHub Actions
+
+1. 在 `run_data_sync.yml` 中将 `RUN_TYPE` 修改为 `intervals_icu`
+2. 在 GitHub 仓库的 Secrets 中添加 `INTERVALS_ICU_ATHLETE_ID` 和 `INTERVALS_ICU_API_KEY`
 
 </details>
 
