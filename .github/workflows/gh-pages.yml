@@ -2,6 +2,19 @@ name: Publish GitHub Pages
 
 # Controls when the action will run.
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/gh-pages.yml
+      - assets/**
+      - index.html
+      - package.json
+      - pnpm-lock.yaml
+      - public/**
+      - src/**
+      - tsconfig.json
+      - vite.config.ts
   workflow_dispatch:
     inputs:
       save_data_in_github_cache:
@@ -28,6 +41,10 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
+env:
+  DATA_CACHE_PREFIX: ${{ inputs.data_cache_prefix || 'track_data' }}
+  SAVE_DATA_IN_GITHUB_CACHE: ${{ inputs.save_data_in_github_cache || github.event_name == 'push' }}
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -53,7 +70,7 @@ jobs:
           persist-credentials: false
 
       - name: Cache Data Files
-        if: inputs.save_data_in_github_cache
+        if: env.SAVE_DATA_IN_GITHUB_CACHE == 'true'
         uses: actions/cache@v4
         with:
           path: |
@@ -70,13 +87,13 @@ jobs:
             run_page/data.db
             src/static/activities.json
             imported.json
-          key: ${{ inputs.data_cache_prefix }}-${{ github.sha }}-${{ github.run_id }}
+          key: ${{ env.DATA_CACHE_PREFIX }}-${{ github.sha }}-${{ github.run_id }}
           restore-keys: |
-            ${{ inputs.data_cache_prefix }}-${{ github.sha }}-
-            ${{ inputs.data_cache_prefix }}-
+            ${{ env.DATA_CACHE_PREFIX }}-${{ github.sha }}-
+            ${{ env.DATA_CACHE_PREFIX }}-
 
       - name: Restore source assets after cache
-        if: inputs.save_data_in_github_cache
+        if: env.SAVE_DATA_IN_GITHUB_CACHE == 'true'
         run: |
           git restore --source=HEAD --worktree -- assets/index.tsx assets/start.svg assets/end.svg
 
