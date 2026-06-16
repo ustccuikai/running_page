@@ -124,7 +124,34 @@ const extractCoordinate = (str: string): [number, number] | null => {
 };
 
 const cities = chinaCities.map((c) => c.name);
+const provinceNameByCode = new Map(
+  chinaCities.filter((c) => !c.city).map((c) => [c.province, c.name] as const)
+);
+const provinceNameByCity = new Map(
+  chinaCities
+    .filter((c) => c.city)
+    .map((c) => [c.name, provinceNameByCode.get(c.province) || ''] as const)
+);
 const locationCache = new Map<number, ReturnType<typeof locationForRun>>();
+
+const findCountryInLocation = (
+  locationParts: string[],
+  hasChinaLocation: boolean
+) => {
+  if (locationParts.some((part) => part.includes('中国'))) {
+    return '中国';
+  }
+  if (hasChinaLocation) {
+    return '中国';
+  }
+
+  const lastChinesePart = locationParts
+    .slice()
+    .reverse()
+    .find((part) => /[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/.test(part));
+  return lastChinesePart || '';
+};
+
 // what about oversea?
 const locationForRun = (
   run: Activity
@@ -141,6 +168,10 @@ const locationForRun = (
   let [city, province, country] = ['', '', ''];
   let coordinate = null;
   if (location) {
+    const locationParts = location
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
     // Only for Chinese now
     // should filter 臺灣
     const cityMatch = extractCities(location);
@@ -158,17 +189,12 @@ const locationForRun = (
       // try to extract city coord from location_country info
       coordinate = extractCoordinate(location);
     }
-    const l = location.split(',');
-    // or to handle keep location format
-    let countryMatch = l[l.length - 1].match(
-      /[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/
-    );
-    if (!countryMatch && l.length >= 3) {
-      countryMatch = l[2].match(/[\u4e00-\u9fa5].*[\u4e00-\u9fa5]/);
+
+    if (!province && city) {
+      province = provinceNameByCity.get(city) || '';
     }
-    if (countryMatch) {
-      [country] = countryMatch;
-    }
+
+    country = findCountryInLocation(locationParts, Boolean(province || city));
   }
   if (MUNICIPALITY_CITIES_ARR.includes(city)) {
     province = city;
@@ -176,6 +202,8 @@ const locationForRun = (
       const districtMatch = extractDistricts(location);
       if (districtMatch.length > 0) {
         city = districtMatch[districtMatch.length - 1];
+      } else {
+        city = '';
       }
     }
   }
