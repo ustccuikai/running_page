@@ -2,6 +2,7 @@ import argparse
 import json
 
 from config import JSON_FILE, SQL_FILE
+from fix_location import fix_locations
 from generator import Generator
 
 
@@ -21,6 +22,7 @@ def run_strava_sync(
     # if you want to refresh data change False to True
     generator.only_run = only_run
     generator.sync(False)
+    fix_locations(generator.session)
 
     activities_list = generator.load()
     with open(JSON_FILE, "w") as f:
